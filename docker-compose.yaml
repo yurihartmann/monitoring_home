@@ -2,7 +2,7 @@ version: "3"
 
 services:
     influxdb:
-        restart: unless-stopped
+        restart: always
         container_name: influxdb
         image: influxdb:1.8.10
         volumes:
@@ -17,6 +17,7 @@ services:
         privileged: true
 
     grafana:
+        restart: always
         image: grafana/grafana:latest
         ports:
             - '3000:3000'
@@ -26,6 +27,7 @@ services:
             - influxdb
 
     chronograf:
+        restart: always
         image: chronograf:latest
         ports:
             - '127.0.0.1:8888:8888'
