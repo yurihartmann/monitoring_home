@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+    influxdb:
+        restart: unless-stopped
+        container_name: influxdb
+        image: influxdb:1.8.10
+        volumes:
+            - ./influxdb/etc:/etc/influxdb
+            - ./influxdb:/var/lib/influxdb
+        environment:
+            INFLUXDB_ADMIN_USER: root
+            INFLUXDB_ADMIN_PASSWORD: root
+            GF_INSTALL_PLUGINS: grafana-clock-panel
+        ports:
+            - "8086:8086"
+        privileged: true
+
+    grafana:
+        image: grafana/grafana:latest
+        ports:
+            - '3000:3000'
+        volumes:
+            - ./grafana:/var/lib/grafana
+        depends_on:
+            - influxdb
+
+    chronograf:
+        image: chronograf:latest
+        ports:
+            - '127.0.0.1:8888:8888'
+        volumes:
+            - ./chronograf:/var/lib/chronograf
+        depends_on:
+            - influxdb
+        environment:
+            - INFLUXDB_URL=http://influxdb:8086
+            - INFLUXDB_USERNAME=root
+            - INFLUXDB_PASSWORD=root
